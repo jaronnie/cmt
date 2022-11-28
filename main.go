@@ -59,7 +59,18 @@ func main() {
 }
 
 func commit(ans *Answer) {
-	commitmsg := fmt.Sprintf("%s(%s): %s(%s-%s)", ans.Type, ans.Scope, ans.Message, ans.Version, ans.TBNum)
+	var commitmsg string
+	switch {
+	case ans.Version == "" && ans.TBNum == "":
+		commitmsg = fmt.Sprintf("%s(%s): %s", ans.Type, ans.Scope, ans.Message)
+	case ans.Version == "" && ans.TBNum != "":
+		commitmsg = fmt.Sprintf("%s(%s): %s(%s)", ans.Type, ans.Scope, ans.Message, ans.TBNum)
+	case ans.Version != "" && ans.TBNum == "":
+		commitmsg = fmt.Sprintf("%s(%s): %s(%s)", ans.Type, ans.Scope, ans.Message, ans.Version)
+	default:
+		commitmsg = fmt.Sprintf("%s(%s): %s(%s-%s)", ans.Type, ans.Scope, ans.Message, ans.Version, ans.TBNum)
+	}
+
 	fmt.Printf("commit message : %s\n", commitmsg)
 	commandContext := exec.Command("git", "commit", "-m", fmt.Sprintf("%s", commitmsg))
 	commandContext.Stdout = os.Stdout

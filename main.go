@@ -85,6 +85,21 @@ func commit(ans *Answer) {
 func defaultConstruct(ans *Answer, lastCommit string) {
 	commitReg := regexp.MustCompile("^([^(]*)\\(([^)]*)\\):\\s([^(]*)\\(([v\\.0-9]{6,15})-([^)]*)\\)$")
 	submatch := commitReg.FindAllStringSubmatch(lastCommit, -1)
+
+	if len(submatch) == 0 {
+		commitReg = regexp.MustCompile("^([^(]*)\\(([^)]*)\\):\\s([^(]*)")
+		submatch = commitReg.FindAllStringSubmatch(lastCommit, -1)
+	}
+
+	if len(submatch) == 1 && len(submatch[0]) == 4 {
+		ans.Type = submatch[0][1]
+		tpq.Prompt.(*survey.Select).Default = ans.Type
+		ans.Scope = submatch[0][2]
+		scopeq.Prompt.(*survey.Input).Default = ans.Scope
+		ans.Message = submatch[0][3]
+		messageq.Prompt.(*survey.Input).Default = ans.Message
+	}
+
 	if len(submatch) == 1 && len(submatch[0]) == 6 {
 		ans.Type = submatch[0][1]
 		tpq.Prompt.(*survey.Select).Default = ans.Type

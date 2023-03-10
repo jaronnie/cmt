@@ -1,4 +1,4 @@
-module github.com/zibuyu28/cmt
+module github.com/jaronnie/git-cm
 
 go 1.17
 
